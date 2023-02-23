@@ -14,8 +14,8 @@ services:
       SERVICE_TAGS: dev
     working_dir: /var/www
     volumes:
-      - ./:/var/www
-      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - "${APP_DIRECTORY}:/var/www"
+      - ./conf/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
 
@@ -29,7 +29,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./:/var/www
+      - "${APP_DIRECTORY}:/var/www"
       - ./conf/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network

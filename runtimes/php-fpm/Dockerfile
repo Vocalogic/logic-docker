@@ -38,48 +38,13 @@ RUN apt-get update \
 # Copy files
 COPY . /var/www
 
-COPY ./deploy/local.ini /usr/local/etc/php/local.ini
-
-COPY ./deploy/conf.d/nginx.conf /etc/nginx/nginx.conf
-
 RUN chmod +rwx /var/www
 
 RUN chmod -R 777 /var/www
 
-# setup FE
-RUN npm install
-
-RUN npm rebuild node-sass
-
-RUN npm run prod
-
 # setup composer and laravel
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN composer install --working-dir="/var/www"
-
-RUN composer dump-autoload --working-dir="/var/www"
-
-RUN php artisan optimize
-
-RUN php artisan route:clear
-
-RUN php artisan route:cache
-
-RUN php artisan config:clear
-
-RUN php artisan config:cache
-
-RUN php artisan view:clear
-
-RUN php artisan view:cache
-
-# remove this line if you do not want to run migrations on each build
-RUN php artisan migrate --force
-
-EXPOSE 80
-
-RUN ["chmod", "+x", "post_deploy.sh"]
-
-CMD [ "sh", "./post_deploy.sh" ]
-# CMD php artisan serve --host=127.0.0.1 --port=9000
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
